@@ -296,14 +296,14 @@ class CornersProblem(search.SearchProblem):
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        "*** YOUR CODE HERE ***"
-        return self.startingPosition
+        # returns starting position and empty list. the list will keep track of visited corners
+        return (self.startingPosition, [])
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        "*** YOUR CODE HERE ***"
+        return len(state[1]) == 4
 
     def getSuccessors(self, state):
         """
@@ -316,17 +316,21 @@ class CornersProblem(search.SearchProblem):
             is the incremental cost of expanding to that successor
         """
         "*** YOUR CODE HERE ***"
+        x, y = state[0] # get position of current state
         successors = []
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
-            x,y = state 
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
             
             if not self.walls[nextx][nexty]:
-                nextState = (nextx, nexty)
-                cost = 1
-                successors.append((nextState, action, cost))
+                corners = state[1].copy() # copy current corners, because lists can be weird
+                # only add to corner set, if corner has not been visited yet
+                if (nextx, nexty) in self.corners and (nextx, nexty) not in corners:
+                    corners.append((nextx, nexty))
+                # add successor with newly visited corner status
+                nextState = ((nextx, nexty), corners)
+                successors.append((nextState, action, 1))
 
         self._expanded += 1 # DO NOT CHANGE
         return successors

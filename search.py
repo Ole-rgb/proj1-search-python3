@@ -139,45 +139,58 @@ def breadthFirstSearch(problem:SearchProblem):
     """Search the shallowest nodes in the search tree first."""
 
     fringe = util.Queue() #the frontier
-    explored = set() #the already explored nodes
-    parent = dict() #will remember the parent of every explored node
+    # different path finding to allow use for question 5
+    path_options = util.Queue()
+    explored = [] #the already explored nodes; has to be a list, so it is hashable
+    # parent = dict() #will remember the parent of every explored node
     
     #init setup
-    initState = (problem.getStartState(),(),()) #coordinates, direction, cost
-    fringe.push(initState) #the starting state as a tupel
+    #initState = (problem.getStartState(),(),()) #coordinates, direction, cost
+    fringe.push(problem.getStartState()) #the starting state as a tupel
+    path_options.push([])
+    explored.append(problem.getStartState()) # we only 'explore' 
     
     while not fringe.isEmpty():
         #get the first node from the fringe
         stateToExplore=fringe.pop()
+        current_path = path_options.pop()
 
         #test if the state to explore is a goal state
-        if problem.isGoalState(stateToExplore[0]):
-            path = []
-            while (stateToExplore != initState):
-                #append the direction to head
-                path.append(stateToExplore[1])
-                #go one tier higher
-                stateToExplore = parent[stateToExplore] 
-            path.reverse()
-            return path
+        if problem.isGoalState(stateToExplore):
+            return current_path
+            # path = []
+            # while (stateToExplore != initState):
+            #     #append the direction to head
+            #     path.append(stateToExplore[1])
+            #     #go one tier higher
+            #     stateToExplore = parent[stateToExplore] 
+            # path.reverse()
+            # return path
 
-        #only explore new nodes
-        if stateToExplore[0] not in explored:
-            #mark the current node as already explored 
-            explored.add(stateToExplore[0])
-            
-            #explore the current node
-            for successor in problem.getSuccessors(stateToExplore[0]):
-                #skip already explored coordinates
-                if successor[0] in explored: 
-                    continue
-                #keep track if the parent nodes
-                parent[successor] = stateToExplore
-                #add the new nodes to the fringe
+
+        for (successor, direction, _) in problem.getSuccessors(stateToExplore):
+            if successor not in explored:
                 fringe.push(successor)
+                explored.append(successor)
+                new_path_up_to_now = current_path + [direction]
+                path_options.push(new_path_up_to_now)
+        #only explore new nodes
+        # if stateToExplore[0] not in explored:
+        #     #mark the current node as already explored 
+        #     explored.append(stateToExplore[0])
+            
+        #     #explore the current node
+        #     for successor in problem.getSuccessors(stateToExplore[0]):
+        #         #skip already explored coordinates
+        #         if successor[0] in explored: 
+        #             continue
+        #         #keep track if the parent nodes
+        #         parent[successor] = stateToExplore
+        #         #add the new nodes to the fringe
+        #         fringe.push(successor)
 
     #no path exists
-    return []
+    return None
     
 
 def uniformCostSearch(problem:SearchProblem):
