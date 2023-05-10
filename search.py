@@ -122,7 +122,7 @@ def depthFirstSearch(problem:SearchProblem):
             # explores all the successor nodes
             for successor in problem.getSuccessors(stateToExplore[0]):
                 # ignore the explored already coordinates
-                if successor[0] in [tupelElement[0] for tupelElement in explored]: 
+                if successor[0] in [successor[0] for successor in explored]: 
                     continue
                 #in order to reconstruct the path we need to save the parent of each explored node
                 parent[successor] = stateToExplore
@@ -168,7 +168,7 @@ def breadthFirstSearch(problem:SearchProblem):
             #explore the current node
             for successor in problem.getSuccessors(stateToExplore[0]):
                 #skip already explored coordinates
-                if successor[0] in [tupelElement[0] for tupelElement in explored]: 
+                if successor[0] in [successor[0] for successor in explored]: 
                     continue
                 #keep track if the parent nodes
                 parent[successor] = stateToExplore
@@ -179,10 +179,11 @@ def breadthFirstSearch(problem:SearchProblem):
     return []
     
 
-def uniformCostSearch(problem):
+def uniformCostSearch(problem:SearchProblem):
     """Search the node of least total cost first."""
     
     #TODO use update or push?
+    #TODO more efficient option?
     
     fringe = util.PriorityQueue() #the frontier
     explored = set() #the already explored nodes
@@ -190,7 +191,7 @@ def uniformCostSearch(problem):
     
     #init setup
     initState = (problem.getStartState(),(),())
-    fringe.update(initState,1) #the starting state as a tupel
+    fringe.push(initState,0) #the starting state
     
     while not fringe.isEmpty():
         #get the first node from the fringe
@@ -215,7 +216,7 @@ def uniformCostSearch(problem):
             #explore the current node
             for successor in problem.getSuccessors(stateToExplore[0]):
                 #skip already explored coordinates
-                if successor[0] in [tupelElement[0] for tupelElement in explored]: 
+                if successor[0] in [successor[0] for successor in explored]: 
                     continue
                 #keep track if the parent nodes
                 parent[successor] = stateToExplore
@@ -234,10 +235,53 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
-def aStarSearch(problem, heuristic=nullHeuristic):
+def aStarSearch(problem:SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+
+    #TODO how to treat different heuristics? 
+    
+    fringe = util.PriorityQueue() #the frontier
+    explored = set() #the already explored nodes
+    parent = dict() #will remember the parent of every explored node
+    
+    #init setup
+    initState = (problem.getStartState(),(),())
+    fringe.push(initState,heuristic(initState[0],problem)) #the starting state as a tupel
+    
+    while not fringe.isEmpty():
+        #get the first node from the fringe
+        stateToExplore=fringe.pop()
+        
+        #test if the state to explore is a goal state
+        if problem.isGoalState(stateToExplore[0]):
+            path = []
+            while (stateToExplore != initState):
+                #append the direction to head
+                path.append(stateToExplore[1])
+                #go one tier higher
+                stateToExplore = parent[stateToExplore] 
+            path.reverse()
+            return path
+
+        #only explore new nodes
+        if stateToExplore not in explored:
+            #mark the current node as already explored 
+            explored.add(stateToExplore)
+            
+            #explore the current node
+            for successor in problem.getSuccessors(stateToExplore[0]):
+                #skip already explored coordinates
+                if successor[0] in [successor[0] for successor in explored]: 
+                    continue
+                #keep track if the parent nodes
+                parent[successor] = stateToExplore
+                #add new nodes to the fringe
+                fringe.update(item=successor,priority=heuristic(successor[0],problem))
+
+    #no path exists
+    return []
 
 
 # Abbreviations
