@@ -136,7 +136,6 @@ def depthFirstSearch(problem:SearchProblem):
 
 def breadthFirstSearch(problem:SearchProblem):
     """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
 
     fringe = util.Queue() #the frontier
     explored = set() #the already explored nodes
@@ -182,8 +181,51 @@ def breadthFirstSearch(problem:SearchProblem):
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    
+    #TODO use update or push?
+    
+    fringe = util.PriorityQueue() #the frontier
+    explored = set() #the already explored nodes
+    parent = dict() #will remember the parent of every explored node
+    
+    #init setup
+    initState = (problem.getStartState(),(),())
+    fringe.update(initState,1) #the starting state as a tupel
+    
+    while not fringe.isEmpty():
+        #get the first node from the fringe
+        stateToExplore=fringe.pop()
+        
+        #test if the state to explore is a goal state
+        if problem.isGoalState(stateToExplore[0]):
+            path = []
+            while (stateToExplore != initState):
+                #append the direction to head
+                path.append(stateToExplore[1])
+                #go one tier higher
+                stateToExplore = parent[stateToExplore] 
+            path.reverse()
+            return path
+
+        #only explore new nodes
+        if stateToExplore not in explored:
+            #mark the current node as already explored 
+            explored.add(stateToExplore)
+            
+            #explore the current node
+            for successor in problem.getSuccessors(stateToExplore[0]):
+                #skip already explored coordinates
+                if successor[0] in [tupelElement[0] for tupelElement in explored]: 
+                    continue
+                #keep track if the parent nodes
+                parent[successor] = stateToExplore
+                #add new nodes to the fringe
+                fringe.update(item=successor,priority=successor[2])
+
+    #no path exists
+    return []
+
+
 
 def nullHeuristic(state, problem=None):
     """
