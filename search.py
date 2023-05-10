@@ -115,14 +115,14 @@ def depthFirstSearch(problem:SearchProblem):
             return path
 
         #only explore new nodes
-        if stateToExplore not in explored:
+        if stateToExplore[0] not in explored:
             #add the state to the explored states
-            explored.add(stateToExplore)
+            explored.add(stateToExplore[0])
             
             # explores all the successor nodes
             for successor in problem.getSuccessors(stateToExplore[0]):
                 # ignore the explored already coordinates
-                if successor[0] in [successor[0] for successor in explored]: 
+                if successor[0] in explored: 
                     continue
                 #in order to reconstruct the path we need to save the parent of each explored node
                 parent[successor] = stateToExplore
@@ -161,14 +161,14 @@ def breadthFirstSearch(problem:SearchProblem):
             return path
 
         #only explore new nodes
-        if stateToExplore not in explored:
+        if stateToExplore[0] not in explored:
             #mark the current node as already explored 
-            explored.add(stateToExplore)
+            explored.add(stateToExplore[0])
             
             #explore the current node
             for successor in problem.getSuccessors(stateToExplore[0]):
                 #skip already explored coordinates
-                if successor[0] in [successor[0] for successor in explored]: 
+                if successor[0] in explored: 
                     continue
                 #keep track if the parent nodes
                 parent[successor] = stateToExplore
@@ -209,14 +209,14 @@ def uniformCostSearch(problem:SearchProblem):
             return path
 
         #only explore new nodes
-        if stateToExplore not in explored:
+        if stateToExplore[0] not in explored:
             #mark the current node as already explored 
-            explored.add(stateToExplore)
+            explored.add(stateToExplore[0])
             
             #explore the current node
             for successor in problem.getSuccessors(stateToExplore[0]):
                 #skip already explored coordinates
-                if successor[0] in [successor[0] for successor in explored]: 
+                if successor[0] in explored: 
                     continue
                 #keep track if the parent nodes
                 parent[successor] = stateToExplore
