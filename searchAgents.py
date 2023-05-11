@@ -365,7 +365,15 @@ def cornersHeuristic(state, problem:CornersProblem):
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
-    "*** YOUR CODE HERE ***"
+    unfound_corners = [cor for cor in corners if cor not in state[1]]
+    
+    # TODO this heuristic is not admissible/consitent. RECHECK
+    # this might not be optimal, but we calculate the sum of the manhattan distances to all unvisited corners
+    position = state[0]
+    distance = sum([util.manhattanDistance(position, cor) for cor in unfound_corners])
+
+    return distance
+
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
