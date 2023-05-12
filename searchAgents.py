@@ -367,10 +367,10 @@ def cornersHeuristic(state, problem:CornersProblem):
 
     unfound_corners = [cor for cor in corners if cor not in state[1]]
     
-    # TODO this heuristic is not admissible/consitent. RECHECK
-    # this might not be optimal, but we calculate the sum of the manhattan distances to all unvisited corners
-    position = state[0]
-    distance = sum([util.manhattanDistance(position, cor) for cor in unfound_corners])
+    # TODO this heuristic is admissible and consitent, but does not satisfy the 1200 nodes expanded test (optional)
+    # this might not be optimal, but we calculate the sum of the manhattan distances to all unvisited corners divided by 2
+    # this divison is added to be a true lower bound for approximation
+    distance = sum([util.manhattanDistance(state[0], cor) for cor in unfound_corners]) / 2
 
     return distance
 
