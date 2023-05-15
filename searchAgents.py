@@ -467,7 +467,17 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     foodList = foodGrid.asList()
-    distancesToAllFoods = [util.manhattanDistance(position, foodLocation) for foodLocation in foodList]
+    useManhattan = False
+    
+    if useManhattan:
+        # First we attempted to use simply the Manhattan-distance to the furthest away point
+        # but this did not work effeciently enough (expands 9551 nodes)
+        distancesToAllFoods = [util.manhattanDistance(position, foodLocation) for foodLocation in foodList]
+    else:
+        # instead, we compute the actual distance to the furthest away food; this is needed for the tricky maze
+        # this is still a heuristic (we think), because we only calculate the distance from the current point to
+        # the remaining food locations, not the complete path from the current position to collect all food items
+        distancesToAllFoods = [mazeDistance(position, foodLocation, problem.startingGameState) for foodLocation in foodList]
     return max(distancesToAllFoods) if len(distancesToAllFoods) > 0 else 0
 
 
