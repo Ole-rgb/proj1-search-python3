@@ -131,7 +131,7 @@ def depthFirstSearch(problem:SearchProblem):
                 fringe.push(successor)
 
     #no path exists
-    return []
+    return None
 
 
 
@@ -158,14 +158,6 @@ def breadthFirstSearch(problem:SearchProblem):
         #test if the state to explore is a goal state
         if problem.isGoalState(stateToExplore):
             return current_path
-            # path = []
-            # while (stateToExplore != initState):
-            #     #append the direction to head
-            #     path.append(stateToExplore[1])
-            #     #go one tier higher
-            #     stateToExplore = parent[stateToExplore] 
-            # path.reverse()
-            # return path
 
 
         for (successor, direction, _) in problem.getSuccessors(stateToExplore):
@@ -174,20 +166,6 @@ def breadthFirstSearch(problem:SearchProblem):
                 explored.append(successor)
                 new_path_up_to_now = current_path + [direction]
                 path_options.push(new_path_up_to_now)
-        #only explore new nodes
-        # if stateToExplore[0] not in explored:
-        #     #mark the current node as already explored 
-        #     explored.append(stateToExplore[0])
-            
-        #     #explore the current node
-        #     for successor in problem.getSuccessors(stateToExplore[0]):
-        #         #skip already explored coordinates
-        #         if successor[0] in explored: 
-        #             continue
-        #         #keep track if the parent nodes
-        #         parent[successor] = stateToExplore
-        #         #add the new nodes to the fringe
-        #         fringe.push(successor)
 
     #no path exists
     return None
@@ -206,7 +184,7 @@ def uniformCostSearch(problem:SearchProblem):
 
     while not fringe.isEmpty():
         #get the first node from the fringe
-        CooridnatesToExplore, *other, path=fringe.pop() #coodinate, ((direction),(cost)), pathArrayOfDirections
+        CooridnatesToExplore, *_, path=fringe.pop() #coodinate, ((direction),(cost)), pathArrayOfDirections
         #test if the state to explore is a goal state
         if problem.isGoalState(CooridnatesToExplore):
             return path
@@ -227,7 +205,7 @@ def uniformCostSearch(problem:SearchProblem):
                 fringe.update(item=(*successor,newPath),priority=problem.getCostOfActions(newPath))
 
     #no path exists
-    return []
+    return None
 
 
 
@@ -253,7 +231,7 @@ def aStarSearch(problem:SearchProblem, heuristic=nullHeuristic):
 
     while not fringe.isEmpty():
         #get the first node from the fringe
-        CooridnatesToExplore, *other, path=fringe.pop() #coodinate, ((direction),(cost)), pathArrayOfDirections
+        CooridnatesToExplore, *_, path=fringe.pop() #coodinate, ((direction),(cost)), pathArrayOfDirections
         #test if the state to explore is a goal state
         if problem.isGoalState(CooridnatesToExplore):
             return path
@@ -274,7 +252,7 @@ def aStarSearch(problem:SearchProblem, heuristic=nullHeuristic):
                 fringe.update(item=(*successor,newPath),priority=problem.getCostOfActions(newPath)+heuristic(successor[0],problem))
 
     #no path exists
-    return []
+    return None
 
 
 # Abbreviations
