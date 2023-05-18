@@ -40,6 +40,7 @@ from game import Actions
 import util
 import time
 import search
+from pacman import GameState
 
 class GoWestAgent(Agent):
     "An agent that goes West until it can't."
@@ -498,19 +499,21 @@ class ClosestDotSearchAgent(SearchAgent):
         self.actionIndex = 0
         print('Path found with cost %d.' % len(self.actions))
 
-    def findPathToClosestDot(self, gameState):
+    def findPathToClosestDot(self, gameState:GameState):
         """
         Returns a path (a list of actions) to the closest dot, starting from
         gameState.
         """
         # Here are some useful elements of the startState
-        startPosition = gameState.getPacmanPosition()
+        startX,startY = gameState.getPacmanPosition()
         food = gameState.getFood()
         walls = gameState.getWalls()
         problem = AnyFoodSearchProblem(gameState)
-
+       
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        assert not walls[startX][startY], 'starting point is a wall: ' + str("({}, {})".format(startX,startY))
+       
+        return search.astar(problem=problem)
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -527,7 +530,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
     method.
     """
 
-    def __init__(self, gameState):
+    def __init__(self, gameState:GameState):
         "Stores information from the gameState.  You don't need to change this."
         # Store the food for later reference
         self.food = gameState.getFood()
@@ -546,7 +549,9 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         x,y = state
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        #all food-tiles are goal states
+        return self.food[x][y]
+
 
 def mazeDistance(point1, point2, gameState):
     """
