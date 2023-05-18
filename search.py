@@ -168,7 +168,7 @@ def breadthFirstSearch(problem:SearchProblem):
                 path_options.push(new_path_up_to_now)
 
     #no path exists
-    return None
+    return []
     
 
 def uniformCostSearch(problem:SearchProblem):
@@ -222,37 +222,64 @@ def aStarSearch(problem:SearchProblem, heuristic=nullHeuristic):
 
     #TODO how to treat different heuristics? 
 
+    # fringe = util.PriorityQueue() #the frontier
+    # explored = set() #the coordinates of the already expored nodes
+    
+    # #init setup
+    # initState = (problem.getStartState(),(),list()) #(coordinates, direction, path)
+    # fringe.push(initState,heuristic(initState[0],problem)) #the starting state (item,cost)
+
+    # while not fringe.isEmpty():
+    #     #get the first node from the fringe
+    #     CooridnatesToExplore, *other, path=fringe.pop() #coodinate, ((direction),(cost)), pathArrayOfDirections
+    #     #test if the state to explore is a goal state
+    #     if problem.isGoalState(CooridnatesToExplore):
+    #         return path
+        
+    #     #only explore new nodes
+    #     if CooridnatesToExplore not in explored:
+    #         #mark the current node as already explored 
+    #         explored.add(CooridnatesToExplore)
+            
+    #         #explore the current node
+    #         for successor in problem.getSuccessors(CooridnatesToExplore):
+    #             #skip already explored coordinates
+    #             if successor[0] in explored: 
+    #                 continue
+    #             #update the path
+    #             newPath = path + [successor[1]]
+    #             #add new nodes to the fringe
+    #             fringe.update(item=(*successor,newPath),priority=problem.getCostOfActions(newPath)+heuristic(successor[0],problem))
+
+    # #no path exists
+    # return []
+
     fringe = util.PriorityQueue() #the frontier
-    explored = set() #the coordinates of the already expored nodes
+    path_options = util.PriorityQueue()
+    explored = [] #the already explored nodes; has to be a list, so it is hashable
     
     #init setup
-    initState = (problem.getStartState(),(),list()) #(coordinates, direction, path)
-    fringe.push(initState,heuristic(initState[0],problem)) #the starting state (item,cost)
-
+    fringe.push((problem.getStartState(), 0), 0) # (coordinates, cost), pathArrayOfDirections
+    path_options.push([], 0)
+    
     while not fringe.isEmpty():
         #get the first node from the fringe
-        CooridnatesToExplore, *_, path=fringe.pop() #coodinate, ((direction),(cost)), pathArrayOfDirections
-        #test if the state to explore is a goal state
-        if problem.isGoalState(CooridnatesToExplore):
-            return path
-        
-        #only explore new nodes
-        if CooridnatesToExplore not in explored:
-            #mark the current node as already explored 
-            explored.add(CooridnatesToExplore)
-            
-            #explore the current node
-            for successor in problem.getSuccessors(CooridnatesToExplore):
-                #skip already explored coordinates
-                if successor[0] in explored: 
-                    continue
-                #update the path
-                newPath = path + [successor[1]]
-                #add new nodes to the fringe
-                fringe.update(item=(*successor,newPath),priority=problem.getCostOfActions(newPath)+heuristic(successor[0],problem))
+        stateToExplore, cost = fringe.pop()
+        current_path = path_options.pop()
 
-    #no path exists
-    return None
+        if problem.isGoalState(stateToExplore):
+            return current_path
+
+        if stateToExplore not in explored:
+            explored.append(stateToExplore)
+
+            for (successor, direction, succ_cost) in problem.getSuccessors(stateToExplore):
+                new_path_up_to_now = current_path + [direction]
+                summed_cost = cost + succ_cost
+                fringe.push((successor, summed_cost), summed_cost + heuristic(successor, problem))
+                path_options.push(new_path_up_to_now, summed_cost + heuristic(successor, problem))
+
+    return []
 
 
 # Abbreviations

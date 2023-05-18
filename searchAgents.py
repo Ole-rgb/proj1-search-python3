@@ -365,7 +365,15 @@ def cornersHeuristic(state, problem:CornersProblem):
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
-    "*** YOUR CODE HERE ***"
+    unfound_corners = [cor for cor in corners if cor not in state[1]]
+    
+    # TODO this heuristic is admissible and consitent, but does not satisfy the 1200 nodes expanded test (optional)
+    # this might not be optimal, but we calculate the sum of the manhattan distances to all unvisited corners divided by 2
+    # this divison is added to be a true lower bound for approximation
+    distance = sum([util.manhattanDistance(state[0], cor) for cor in unfound_corners]) / 2
+
+    return distance
+
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -458,8 +466,20 @@ def foodHeuristic(state, problem):
     problem.heuristicInfo['wallCount']
     """
     position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    return 0
+    foodList = foodGrid.asList()
+    useManhattan = False
+    
+    if useManhattan:
+        # First we attempted to use simply the Manhattan-distance to the furthest away point
+        # but this did not work effeciently enough (expands 9551 nodes)
+        distancesToAllFoods = [util.manhattanDistance(position, foodLocation) for foodLocation in foodList]
+    else:
+        # instead, we compute the actual distance to the furthest away food; this is needed for the tricky maze
+        # this is still a heuristic (we think), because we only calculate the distance from the current point to
+        # the remaining food locations, not the complete path from the current position to collect all food items
+        distancesToAllFoods = [mazeDistance(position, foodLocation, problem.startingGameState) for foodLocation in foodList]
+    return max(distancesToAllFoods) if len(distancesToAllFoods) > 0 else 0
+
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
