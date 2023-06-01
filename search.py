@@ -140,6 +140,7 @@ def breadthFirstSearch(problem: SearchProblem):
 
     fringe = util.Queue()  # the frontier
     # different path finding to allow use for question 5
+    # this queue keeps track of the according path for each node in the fringe
     path_options = util.Queue()
     explored = []  # the already explored nodes; has to be a list, so it is hashable
     # parent = dict() #will remember the parent of every explored node
@@ -220,7 +221,8 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
+
+    # OLD VERSION
 
     # TODO how to treat different heuristics?
 
@@ -256,7 +258,10 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     # #no path exists
     # return []
 
+    # NEW VERSION (uses the same path finding as in BFS)
+
     fringe = util.PriorityQueue()  # the frontier
+    # this queue keeps track of the according path for each node in the fringe
     path_options = util.PriorityQueue()
     explored = []  # the already explored nodes; has to be a list, so it is hashable
 
